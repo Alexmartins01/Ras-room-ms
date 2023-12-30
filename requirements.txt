@@ -1,2 +1,5 @@
 SQLAlchemy==2.0.24 
 mysqlclient==2.2.1 # requires mysql-connector-c
+Flask==3.0.0
+gunicorn==21.2.0 
+python-dotenv==1.0.0
