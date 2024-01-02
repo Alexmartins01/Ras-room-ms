@@ -1,0 +1,25 @@
+services:
+  rooms:
+    build: .
+    ports: 
+      - 8000:8000
+    environment:
+      DB_HOST: rooms_mysql
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: RoomsDB
+    depends_on:
+      - rooms_mysql
+
+  rooms_mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: RoomsDB
+    volumes:
+      - rooms-mysql-data:/var/lib/mysql
+
+volumes:
+  rooms-mysql-data:
