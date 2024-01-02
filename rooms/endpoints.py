@@ -1,7 +1,8 @@
 from flask import Blueprint, request, current_app, abort
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, delete
 from sqlalchemy.orm import Session
 from rooms.classes import Building, Room, Schedule, AutoScheduleParams, ScheduleParams
+from types import SimpleNamespace
 import math
 import datetime
 import uuid
@@ -149,6 +150,64 @@ def auto_schedule():
                     
         abort(403)
             
+@bp.post("/update")
+def update():
+    r_data = [SimpleNamespace(**x) for x in request.get_json()]
+    building_names = set()
+    room_names = set()
+    for data in r_data:
+        room_names.add(data.room_values['name'])
+        building_names.add(data.building_name)
+    
+    with Session(current_app.engine) as session:
+        db_buildings = session.scalars(
+            select(Building)
+                .where(Building.name.in_(building_names))
+        ).all()
+        
+        db_rooms = session.scalars(
+            select(Room)
+                .where(Room.name.in_(room_names))
+        ).all()
+
+        if len(db_rooms)>0:
+            abort(403)
+
+        buildings: dict[str, Building] = {}
+        b_name_id : dict[str, uuid.UUID] = {}
+        for b in db_buildings:
+            buildings[b.name] = b
+            b_name_id[b.name] = b.id
+        
+        #rooms: dict[str, Room] = {}
+        #for r in db_rooms:
+        #    rooms[r.name] = r
+        
+        for data in r_data:
+            if data.building_name not in buildings:
+                buildings[data.building_name] = Building(id=uuid.uuid4(), name=data.building_name)
+
+            r = Room(
+                id=uuid.uuid4(), 
+                name=data.room_values['name'], 
+                floor=data.room_values['floor'], 
+                capacity=data.room_values['capacity'],
+                computers=data.room_values['computers'],
+                building=buildings[data.building_name]
+            )
+            session.add(r)
+            #else:
+                #session.execute(delete(Schedule).where(Schedule.room_id==r.id))
+                #        
+                #r.capacity = data.room_values['capacity']
+                #r.computers = data.room_values['computers']
+                #r.floor = data.room_values['floor']
+                #r.building = buildings[data.building_name]
+                #session.add(r)
+        
+        session.commit()
+                
+    return '', 204
 
 @bp.get("/buildings")
 def buildings():

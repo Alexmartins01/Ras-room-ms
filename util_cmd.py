@@ -81,3 +81,32 @@ match sys.argv[1]:
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)
         print(json.loads(response.read().decode('utf-8')))
+    
+    case 'update':
+        req_data = [
+            {
+                'room_values' : {
+                    'name' : 'dsd_room0',
+                    'capacity' : 20,
+                    'computers' : 20,
+                    'floor' : 1
+                },
+                'building_name' : 'dsd',
+            },
+            {
+                'room_values' : {
+                    'name' : 'csd_room1',
+                    'capacity' : 50,
+                    'computers' : 50,
+                    'floor' : 3
+                },
+                'building_name' : 'csd',
+            }
+        ]
+
+        req_data_j = json.dumps(req_data).encode()
+        req = request.Request("http://127.0.0.1:5000/update")
+        req.add_header('Content-Type', 'application/json; charset=utf-8')
+        req.add_header('Content-Length', len(req_data_j))
+        response = request.urlopen(req, req_data_j)
+        print(response.status)
