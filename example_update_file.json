@@ -1,0 +1,92 @@
+[
+    {
+        "room_values": {
+            "name": "asd_room0",
+            "capacity": 20,
+            "computers": 20,
+            "floor": 0
+        },
+        "building_name": "asd"
+    },
+    {
+        "room_values": {
+            "name": "asd_room1",
+            "capacity": 25,
+            "computers": 25,
+            "floor": 1
+        },
+        "building_name": "asd"
+    },
+    {
+        "room_values": {
+            "name": "asd_room2",
+            "capacity": 30,
+            "computers": 30,
+            "floor": 2
+        },
+        "building_name": "asd"
+    },
+    {
+        "room_values": {
+            "name": "asd_room3",
+            "capacity": 35,
+            "computers": 35,
+            "floor": 3
+        },
+        "building_name": "asd"
+    },
+    {
+        "room_values": {
+            "name": "asd_room4",
+            "capacity": 40,
+            "computers": 40,
+            "floor": 4
+        },
+        "building_name": "asd"
+    },
+    {
+        "room_values": {
+            "name": "bsd_room0",
+            "capacity": 20,
+            "computers": 20,
+            "floor": 0
+        },
+        "building_name": "bsd"
+    },
+    {
+        "room_values": {
+            "name": "bsd_room1",
+            "capacity": 25,
+            "computers": 25,
+            "floor": 1
+        },
+        "building_name": "bsd"
+    },
+    {
+        "room_values": {
+            "name": "bsd_room2",
+            "capacity": 30,
+            "computers": 30,
+            "floor": 2
+        },
+        "building_name": "bsd"
+    },
+    {
+        "room_values": {
+            "name": "bsd_room3",
+            "capacity": 35,
+            "computers": 35,
+            "floor": 3
+        },
+        "building_name": "bsd"
+    },
+    {
+        "room_values": {
+            "name": "bsd_room4",
+            "capacity": 40,
+            "computers": 40,
+            "floor": 4
+        },
+        "building_name": "bsd"
+    }
+]

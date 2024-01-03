@@ -49,6 +49,17 @@ class Building(Base):
             "id" : self.id,
             "name" : self.name,
         }
+    
+    def to_dict_with_rooms(self) -> dict:
+        rooms = []
+        for room in self.rooms:
+            rd = room.to_dict()
+            del rd["building_id"]
+            rooms.append(rd)
+
+        d = self.to_dict()
+        d["rooms"] = rooms
+        return d
 
 class Schedule(Base):
     __tablename__ = "schedule"
@@ -66,6 +77,24 @@ class Schedule(Base):
             "end": self.end,
             "room_id" : self.room_id
         }
+
+    def to_dict_full(self) -> dict:
+        r = self.room
+        d = {
+            'id': self.id.hex,
+            'room': {
+                'id' : r.id.hex,
+                'name': r.name,
+                'floor': r.floor,
+                'capacity': r.capacity,
+                'computers': r.computers
+            },
+            'building_id': r.building_id.hex,
+            'building_name': r.building.name,
+            'start_date_time': self.start,
+            'end_date_time': self.end
+        }
+        return d
 
 
 @dataclass
@@ -122,33 +151,3 @@ class ScheduleParams:
         return sch_l
 
 
-
-class RoomManager:
-    schedules: list[Schedule]
-
-    def __init__(self) -> None:
-        pass
-    
-    def schedule():
-        ...
-    
-    def auto_schedule():
-        ...
-    
-    def get_available_rooms():
-        ...
-    
-    def get_schedule():
-        ...
-    
-    def get_buildings():
-        ...
-    
-    def get_building():
-        ...
-    
-    def add_rooms():
-        ...
-    
-    def delete_room():
-        ...

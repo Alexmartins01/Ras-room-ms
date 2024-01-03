@@ -55,7 +55,7 @@ match sys.argv[1]:
             }
         ]
         req_data_j = json.dumps(req_data).encode()
-        req = request.Request("http://127.0.0.1:5000/schedule")
+        req = request.Request("http://127.0.0.1:8000/schedule")
         req.add_header('Content-Type', 'application/json; charset=utf-8')
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)
@@ -69,43 +69,40 @@ match sys.argv[1]:
 
         req_data = {
                 'begin_datetime': '2024-01-01T20:00:00',
-                'end_datetime': '2024-01-01T21:30:00',
-                'duration_minutes':30,
-                'total_capacity':32,
+                'end_datetime': '2024-01-01T21:00:00',
+                'duration_minutes':45,
+                'total_capacity':200,
                 'buildings':[],
             }
 
         req_data_j = json.dumps(req_data).encode()
-        req = request.Request("http://127.0.0.1:5000/auto-schedule")
+        req = request.Request("http://127.0.0.1:8000/auto-schedule")
         req.add_header('Content-Type', 'application/json; charset=utf-8')
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)
         print(json.loads(response.read().decode('utf-8')))
     
     case 'update':
-        req_data = [
-            {
-                'room_values' : {
-                    'name' : 'dsd_room0',
-                    'capacity' : 20,
-                    'computers' : 20,
-                    'floor' : 1
-                },
-                'building_name' : 'dsd',
-            },
-            {
-                'room_values' : {
-                    'name' : 'csd_room1',
-                    'capacity' : 50,
-                    'computers' : 50,
-                    'floor' : 3
-                },
-                'building_name' : 'csd',
-            }
-        ]
+        b_names = ['asd','bsd']
+        req_data = []
+        for bn in b_names:
+            for i in range(0,5):
+                req_data.append(
+                    {
+                        'room_values': {
+                            'name': f'{bn}_room{i}',
+                            'capacity': 20+5*i,
+                            'computers': 20+5*i,
+                            'floor': i,
+                        },
+                        'building_name': bn,
+                    }
+                )
 
-        req_data_j = json.dumps(req_data).encode()
-        req = request.Request("http://127.0.0.1:5000/update")
+        req_data_j = json.dumps(req_data, indent=4)
+        print(req_data_j)
+    
+        req = request.Request("http://127.0.0.1:8000/update")
         req.add_header('Content-Type', 'application/json; charset=utf-8')
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)

@@ -94,7 +94,7 @@ def try_auto_schedule(params: AutoScheduleParams, rooms: list[Room], session: Se
     
     valid_schs = []
     for room in rooms:
-        valid_schs.append(Schedule(id=uuid.uuid4(), start=beg_search, end=end_search, room_id=room.id))
+        valid_schs.append(Schedule(id=uuid.uuid4(), start=beg_search, end=end_search, room=room))
     
     return valid_schs
 
@@ -131,8 +131,9 @@ def auto_schedule():
                 schs = try_auto_schedule(params, [room], session, sch_mem)
                 if schs is not None:
                     session.add_all(schs)
+                    data = [s.to_dict_full() for s in schs]
                     session.commit()
-                    return [s.id for s in schs], 200
+                    return data, 200
 
         for i in range(2,len(rooms)):
             room_cmbs = itertools.combinations(rooms, i)
@@ -145,8 +146,9 @@ def auto_schedule():
                 schs = try_auto_schedule(params, room_cmb, session, sch_mem)
                 if schs is not None:
                     session.add_all(schs)
+                    data = [s.to_dict_full() for s in schs]
                     session.commit()
-                    return [s.id for s in schs], 200
+                    return data, 200
                     
         abort(403)
             
@@ -209,6 +211,77 @@ def update():
                 
     return '', 204
 
+@bp.get('/schedule/<schedule_id>')
+def get_schedule(schedule_id):
+    sch_uuid = uuid.UUID(schedule_id)
+    with Session(current_app.engine) as session:
+        sch = session.get(Schedule, sch_uuid)
+        if sch is None:
+            abort(404)
+        data = sch.to_dict_full()
+        return data, 200
+
+        
+@bp.post("/unschedule")
+def unschedule():
+    sch_ids = set(uuid.UUID(x) for x in request.get_json())
+
+    with Session(current_app.engine) as session:
+        db_sch_ids = set(session.scalars(
+            select(Schedule.id)
+                .where(Schedule.id.in_(sch_ids))
+        ))
+
+        dif_ids = sch_ids - db_sch_ids
+        if len(dif_ids)>0:
+            return dif_ids, 404
+
+        session.execute(delete(Schedule).where(Schedule.id.in_(sch_ids)))
+        session.commit()
+    
+    return '', 204
+
+@bp.get('/room/<room_id>')
+def get_room(room_id):
+    r_uuid = uuid.UUID(room_id)
+    with Session(current_app.engine) as session:
+        r = session.get(Room, r_uuid)
+        if r is None:
+            abort(404)
+
+        rd = r.to_dict()
+        del rd['building_id']
+        d = {
+            'room': rd,
+            'building_id': r.building_id,
+            'building_name': r.building.name
+        }
+        return d, 200 
+
+
+@bp.delete("/room/<room_id>")
+def delete_room(room_id):
+    r_uuid = uuid.UUID(room_id)
+    with Session(current_app.engine) as session:
+        r = session.get(Room, r_uuid)
+        if r is None:
+            abort(404)
+        
+        session.delete(r)
+        session.commit()
+
+    return '', 204
+
+@bp.get("/building/<building_id>")
+def get_building(building_id):
+    b_uuid = uuid.UUID(building_id)
+    with Session(current_app.engine) as session:
+        b = session.get(Building, b_uuid)
+        if b is None:
+            abort(404)
+        d = b.to_dict_with_rooms()
+        return d, 200
+
 @bp.get("/buildings")
 def buildings():
     with Session(current_app.engine) as session:
@@ -216,15 +289,7 @@ def buildings():
         buildings = session.execute(st).scalars()
         ret_buildings = []
         for building in buildings:
-            rooms = []
-            for room in building.rooms:
-                rd = room.to_dict()
-                del rd["building_id"]
-                rooms.append(rd)
-
-            d = building.to_dict()
-            d["rooms"] = rooms
-            ret_buildings.append(d)
+            ret_buildings.append(building.to_dict_with_rooms())
 
         return ret_buildings
             
