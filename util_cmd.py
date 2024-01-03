@@ -99,9 +99,8 @@ match sys.argv[1]:
                     }
                 )
 
-        req_data_j = json.dumps(req_data, indent=4)
-        print(req_data_j)
-    
+        req_data_j = json.dumps(req_data).encode()
+        
         req = request.Request("http://127.0.0.1:8000/update")
         req.add_header('Content-Type', 'application/json; charset=utf-8')
         req.add_header('Content-Length', len(req_data_j))
