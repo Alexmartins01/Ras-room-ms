@@ -80,7 +80,7 @@ match sys.argv[1]:
         req.add_header('Content-Type', 'application/json; charset=utf-8')
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)
-        print(json.loads(response.read().decode('utf-8')))
+        print(json.dumps(json.loads(response.read().decode('utf-8')), indent=4))
     
     case 'update':
         b_names = ['asd','bsd']

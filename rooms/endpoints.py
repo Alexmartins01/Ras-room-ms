@@ -135,8 +135,12 @@ def auto_schedule():
                     session.commit()
                     return data, 200
 
-        for i in range(2,len(rooms)):
-            room_cmbs = itertools.combinations(rooms, i)
+        comb_search_rooms = []
+        for i in range(len(search_rooms),len(rooms)):
+            comb_search_rooms.append(rooms[i])
+
+        for i in range(2,len(comb_search_rooms)):
+            room_cmbs = itertools.combinations(comb_search_rooms, i)
             for room_cmb in room_cmbs:
                 t_cap = 0
                 for room in room_cmb:

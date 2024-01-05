@@ -10,13 +10,14 @@ RUN apk add --no-cache mariadb-client mariadb-connector-c mariadb-dev
 RUN mkdir /app
 
 WORKDIR /app
-ADD rooms/ rooms/
 COPY requirements.txt .
 RUN python3 -m venv .venv/
 
 ENV PATH="/app/.venv/bin:$PATH"
 
 RUN python3 -m pip install -r requirements.txt
+
+ADD rooms/ rooms/
 
 COPY rooms-start.sh util_cmd.py .
 

@@ -22,7 +22,7 @@ class Room(Base):
     computers: Mapped[int]
     building_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("building.id"))
     building: Mapped["Building"] = relationship(back_populates="rooms")
-    schedules: Mapped[List["Schedule"]] = relationship(back_populates="room")
+    schedules: Mapped[List["Schedule"]] = relationship(back_populates="room", cascade='all, delete')
 
     def __repr__(self) -> str:
         return f"name:{self.name}, floor:{self.floor}, cap:{self.capacity}, pcs:{self.computers}"
