@@ -283,7 +283,7 @@ def get_building(building_id):
         return d, 200
 
 @bp.get("/buildings")
-def buildings():
+def get_buildings():
     with Session(current_app.engine) as session:
         st = select(Building)
         buildings = session.execute(st).scalars()

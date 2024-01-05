@@ -17,7 +17,7 @@ def create_app():
     DATABASE_URL = f'mysql+mysqldb://{db_user}:{db_password}@{db_host}:3306/{db_name}'
 
     # Create an engine
-    engine = create_engine(DATABASE_URL, echo=True)
+    engine = create_engine(DATABASE_URL)
 
     app = Flask(__name__)
     app.engine = engine

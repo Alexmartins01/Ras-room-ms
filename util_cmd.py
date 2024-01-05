@@ -106,3 +106,18 @@ match sys.argv[1]:
         req.add_header('Content-Length', len(req_data_j))
         response = request.urlopen(req, req_data_j)
         print(response.status)
+
+    case 'unschedule':
+        req_data = []
+        with Session(engine) as session:
+            schs = session.scalars(select(Schedule))
+            for sch in schs:
+                req_data.append(sch.id.hex)
+
+        req_data_j = json.dumps(req_data).encode()
+        
+        req = request.Request("http://127.0.0.1:8000/unschedule")
+        req.add_header('Content-Type', 'application/json; charset=utf-8')
+        req.add_header('Content-Length', len(req_data_j))
+        response = request.urlopen(req, req_data_j)
+        print(response.status)
