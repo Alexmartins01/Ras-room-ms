@@ -19,7 +19,7 @@ RUN python3 -m pip install -r requirements.txt
 
 ADD rooms/ rooms/
 
-COPY rooms-start.sh util_cmd.py .
+COPY rooms-start.sh util_cmd.py ./
 
 CMD ash rooms-start.sh
 
